@@ -1,8 +1,18 @@
 import argparse
 import trimesh
+import json, os
 
 def main(dir_path:str):
-    experiment_number=dir_path.split('\\')[1].split()[1]
+    # Create results directory if not existent
+    resultsPath = os.path.join(dir_path, "results")
+
+    if not os.path.exists(resultsPath):
+        os.makedirs(resultsPath)
+
+    experiment_number = os.path.basename(
+                            os.path.normpath(dir_path)
+                        ).split("_")[-1]
+
     vessel=trimesh.load("{}/results/vessel_EX{}.stl".format(dir_path,experiment_number))
     deployed_stent=trimesh.load("{}/results/deployed_outer_stentEX{}.stl".format(dir_path,experiment_number))
     combined = trimesh.util.concatenate([vessel,deployed_stent])

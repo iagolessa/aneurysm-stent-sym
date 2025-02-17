@@ -3,7 +3,7 @@ from Utils import *
 import time
 import pickle
 import argparse
-import json
+import json, os
  
 def jsonParser(dir_path,pos):
     with open(dir_path+'/appSettings.json','r') as setting:
@@ -57,8 +57,18 @@ def main(dir_path:str,stent_pos:str):
                 strut_radius=stent_param["strut_radius"],
                 offset_angle=stent_param.get("offset_angle",0)
             )
+
+    # Create results directory if not existent
+    resultsPath = os.path.join(dir_path, "results")
+
+    if not os.path.exists(resultsPath):
+        os.makedirs(resultsPath)
+
     # for centerline, the file to be loaded must be in .vtk format
-    experiment_number=dir_path.split('\\')[1].split()[1]
+    experiment_number = os.path.basename(
+                            os.path.normpath(dir_path)
+                        ).split("_")[-1]
+
     centerline_load=pv.read("{}/results/centerline_EX{}.vtk".format(dir_path,experiment_number))
     path_to_bound="{}/results/vessel_EX{}.stl".format(dir_path,experiment_number) if kind_FD=="outer"\
         else "{}/results/stented1x_vessel_EX{}.stl".format(dir_path,experiment_number)
