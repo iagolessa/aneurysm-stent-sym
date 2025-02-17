@@ -1,8 +1,10 @@
+#! /env/bin/python
+
 import numpy as np
 from Utils import *
 import time
 import argparse
-import json
+import json, os
 
 def jsonParser(dir_path):
     with open(dir_path+'/appSettings.json','r') as setting:
@@ -31,7 +33,17 @@ def main(dir_path:str):
     centerline_points=dict_aneu_geom["stent_centerline"]
     inlet_surface=dict_aneu_geom.get("inlet",None)
     outlet_surface=dict_aneu_geom.get("outlet",None)
-    experiment_number=dir_path.split('\\')[1].split()[1]
+
+    # Create results directory if not existent
+    resultsPath = os.path.join(dir_path, "results")
+
+    if not os.path.exists(resultsPath):
+        os.makedirs(resultsPath)
+
+    experiment_number = os.path.basename(
+                            os.path.normpath(dir_path)
+                        ).split("_")[-1]
+
     if inlet_surface!=None and outlet_surface!=None:
         inlet_surface.save("{}/results/inlet_EX{}.stl".format(dir_path,experiment_number))
         outlet_surface.save("{}/results/outlet_EX{}.stl".format(dir_path,experiment_number))

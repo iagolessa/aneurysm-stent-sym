@@ -3,7 +3,8 @@ from Utils import *
 import time
 import pickle
 import argparse
-import json
+import json, os
+import platform
 
 def jsonParser(dir_path,pos):
     with open(dir_path+'/appSettings.json','r') as setting:
@@ -25,16 +26,27 @@ def loadFDCaseFile(filename:str)->ps.VirtualStenting:
 def main(dir_path:str,stent_pos:str):
     kind_FD,deploy_param,render_param,filter_param=jsonParser(dir_path,stent_pos)
     t1 = time.time()
-    experiment_number=dir_path.split('\\')[1].split()[1]
-    case= loadFDCaseFile('{}/results/init_{}_stentEX{}.obj'.format(dir_path,kind_FD,experiment_number))
-    result = case.deploy( 
-                tol=deploy_param["tol"], 
+
+    # Create results directory if not existent
+    resultsPath = os.path.join(dir_path, "results")
+
+    if not os.path.exists(resultsPath):
+        os.makedirs(resultsPath)
+
+    # Extract experiment number independent of system
+    experiment_number = os.path.basename(
+                            os.path.normpath(dir_path)
+                        ).split("_")[-1]
+
+    case = loadFDCaseFile('{}/results/init_{}_stentEX{}.obj'.format(dir_path,kind_FD,experiment_number))
+    result = case.deploy(
+                tol=deploy_param["tol"],
                 add_tol=deploy_param["add_tol"],
-                step=deploy_param["step"], 
+                step=deploy_param["step"],
                 fstop=deploy_param["fstop"],
                 max_iter=deploy_param["max_iter"],
                 alpha=deploy_param["alpha"],
-                verbose=deploy_param["verbose"], 
+                verbose=deploy_param["verbose"],
                 OC=deploy_param["OC"],
                 render_gif=deploy_param.get("render_gif"),
                 deployment_name=deploy_param.get("deployment_name")
