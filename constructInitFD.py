@@ -4,7 +4,7 @@ import time
 import pickle
 import argparse
 import json, os
- 
+
 def jsonParser(dir_path,pos):
     with open(dir_path+'/appSettings.json','r') as setting:
         if(pos!="inner" and pos!="outer"):
@@ -19,12 +19,12 @@ def jsonParser(dir_path,pos):
 
 def selectPattern(name:str,param:dict={}):
     '''
-    select flow diverter pattern 
+    select flow diverter pattern
     '''
     if name not in ["helical","semienterprise","enterprise","honeycomb"]:
         raise ValueError("pattern name must be either [helical, semienterprise, enterprise, honeycomb]")
     if(name=="helical"):
-        if "size" in param.keys(): 
+        if "size" in param.keys():
             return ps.helical(param["size"])
         return ps.helical()
     elif(name=="semienterprise"):
@@ -42,18 +42,18 @@ def saveFDCase(filename:str,case:ps.VirtualStenting):
     '''
     with open(filename, 'wb') as config_object_file:
         pickle.dump(case, config_object_file)
-    
+
 
 def main(dir_path:str,stent_pos:str):
     t0 = time.time()
     kind_FD,pattern_param,stent_param,deploy_pos_param,filter_param=jsonParser(dir_path,stent_pos)
     pattern = selectPattern(pattern_param["name"],pattern_param.get("parameter",{}))
     stent = ps.FlowDiverter(
-                pattern, 
-                radius=stent_param["radius"], 
-                height=stent_param["height"], 
-                tcopy=stent_param["tcopy"], 
-                hcopy=stent_param["hcopy"], 
+                pattern,
+                radius=stent_param["radius"],
+                height=stent_param["height"],
+                tcopy=stent_param["tcopy"],
+                hcopy=stent_param["hcopy"],
                 strut_radius=stent_param["strut_radius"],
                 offset_angle=stent_param.get("offset_angle",0)
             )
@@ -76,9 +76,9 @@ def main(dir_path:str,stent_pos:str):
     if(filter_param):
         bound.subdivide(filter_param['nsub'], subfilter=filter_param['kind'])
     centerline = ps.VascCenterline(
-                    centerline_load.points, 
-                    init_range=deploy_pos_param.get("range",np.array([])), 
-                    point_spacing=deploy_pos_param.get("point_spacing",5), 
+                    centerline_load.points,
+                    init_range=deploy_pos_param.get("range",np.array([])),
+                    point_spacing=deploy_pos_param.get("point_spacing",5),
                     reverse=deploy_pos_param.get("reverse",False)
                 )
     case = ps.VirtualStenting(stent = stent, centerline = centerline, boundary = bound)

@@ -17,15 +17,15 @@ def main(dir_path:str):
     t0 = time.time()
     aneu_param,filter_param=jsonParser(dir_path)
     dict_aneu_geom = aneu_geom(
-        r=aneu_param['r'], 
-        h=aneu_param['h'], 
-        hstent=aneu_param['hstent'], 
-        overlap=aneu_param['overlap'], 
-        aneu_rad=aneu_param['aneu_rad'], 
-        cyl_res = aneu_param['cyl_res'], 
-        sph_res=aneu_param['sph_res'], 
-        angle=np.radians(aneu_param['angle']), 
-        extension_ratio=aneu_param['extension_ratio'], 
+        r=aneu_param['r'],
+        h=aneu_param['h'],
+        hstent=aneu_param['hstent'],
+        overlap=aneu_param['overlap'],
+        aneu_rad=aneu_param['aneu_rad'],
+        cyl_res = aneu_param['cyl_res'],
+        sph_res=aneu_param['sph_res'],
+        angle=np.radians(aneu_param['angle']),
+        extension_ratio=aneu_param['extension_ratio'],
         ext_res=aneu_param['ext_res'],
         get_inlet_outlet=aneu_param.get("get_inlet_outlet",False)
     )
